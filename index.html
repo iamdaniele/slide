@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      font-size: 1.8rem;
+    }
+    pre {
+      font-family: Monaco;
+      display: inline;
+      font-size: 1.7rem;
+      border: 1px solid #ddd;
+      border-radius: 0.25rem;
+      padding: 0.25rem;
+      background: #eee;
+    }
+    div.slides > div {display:none;}
+    div.slides > div.active {display:block;}
+
+    @keyframes wobble {
+       0% { transform: translateX(0%); } 
+       50% { transform: translateX(1rem);  }
+       100% { transform: translateX(0%); } 
+    }
+
+    .wobbly-animation {
+      display: block;
+      text-decoration: none;
+      animation-name: wobble;
+      animation-duration: 1s;
+      animation-fill-mode: both;
+      animation-iteration-count: infinite;
+    }
+  </style>
+  <title>Slide</title>
+  <div class="slides">
+
+    <div class="active">
+      <h1>Simple slideshow</h1>
+      <a class="wobbly-animation" href="#" onclick="next(); return false;">➡️</a>
+    </div>
+    
+    <div>
+      <h1>Usage</h1>
+      <ul>
+        <li>Create div inside <pre>div.slides</pre></li>
+        <li>Each div is your slide</li>
+      </ul>
+    </div>    
+
+    <div>
+      <h1>Navigation</h1>
+      <ul>
+        <li>➡️ or <pre>Space</pre> to advance to the next slide</li>
+        <li>⬅️ go back to previous slide</li>
+      </ul>
+    </div>
+
+    <div>
+      <h1>Goto slide</h1>
+      <ul>
+        <li><pre>g</pre> + slide number (1-based, first slide is slide 1) to go to that slide</li>
+        <li>(If the slide doesn't exist, or the input is not valid, nothing will happen)</li>
+      </ul>
+    </div>
+
+  </div>
+</head>
+<body>
+  <script>
+      [...document.querySelectorAll('.slides > div')].map((el, idx) => el.setAttribute('index', idx + 1))
+
+      const next = λ => {
+        const current = document.querySelector('div.active');
+        const next = current.nextElementSibling;
+        if (next) {
+          current.removeAttribute('class');
+          next.setAttribute('class', 'active');  
+        }
+        
+      }
+
+      const previous = λ => {
+        const current = document.querySelector('div.active');
+        const previous = current.previousElementSibling;
+        if (previous) {
+          current.removeAttribute('class');
+          previous.setAttribute('class', 'active');              
+        }        
+      }
+
+      const gotoSlide = slideIdx => {
+        const current = document.querySelector('div.active');
+        if (!!slideIdx.match(/[^\d]/)) {
+          return;
+        }
+
+        const slide = document.querySelector(`.slides div:nth-child(${slideIdx})`);
+        if (slide) {
+          current.removeAttribute('class');
+          slide.setAttribute('class', 'active');
+        }
+
+      }
+
+      document.addEventListener('keydown', e => {
+        const SpaceKeyCode = 32;
+        const ArrowLeftKeyCode = 37;
+        const ArrowRightKeyCode = 39;
+        const GotoKeyCode = 71;
+
+        const current = document.querySelector('div.active');
+        switch (e.keyCode) {
+          case SpaceKeyCode:
+          case ArrowRightKeyCode:
+            next();
+            break;
+          case ArrowLeftKeyCode:
+            previous();          
+            break;
+
+          case GotoKeyCode:
+            const slideIdx = prompt('Goto slide:');
+            gotoSlide(slideIdx);
+        }
+      });
+  </script>
+</body>
+</html>
